@@ -110,7 +110,12 @@ const articles = [];
 // Process each markdown file
 mdFiles.forEach(file => {
     const filePath = path.join(BLOG_DIR, file);
-    const fileContent = fs.readFileSync(filePath, 'utf-8');
+    // Normalise CRLF to LF before anything parses this. On a Windows checkout with
+    // core.autocrlf=true these files arrive with \r\n, and the line-oriented regexes
+    // below (the H1 strip, the trailing-whitespace trim) assume \n — in JS regex `.`
+    // does not match `\r`, so `# .*\n` silently fails to match and the fix no-ops.
+    // Normalising here keeps the generated HTML byte-identical across platforms.
+    const fileContent = fs.readFileSync(filePath, 'utf-8').replace(/\r\n/g, '\n');
 
     // Parse frontmatter and content
     const { data: frontmatter, content } = matter(fileContent);
