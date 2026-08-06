@@ -32,7 +32,15 @@ export default defineConfig({
             workbox: {
                 navigateFallbackDenylist: [/^\/mac/, /^\/ios/, /^\/ipad/, /^\/android/, /^\/web/, /^\/about/, /^\/blog/, /^\/changelog/]
             },
-            includeAssets: ['favicon.ico', 'apple-touch-icon.png'],
+            // The two font files the app actually renders with are precached so the
+            // teleprompter keeps its typography offline; the italic/bold faces fall
+            // back to the system font until they are fetched.
+            includeAssets: [
+                'favicon.ico',
+                'apple-touch-icon.png',
+                'vendor/google/dm-sans/dm-sans-latin.woff2',
+                'vendor/opendyslexic/OpenDyslexic-Regular.woff'
+            ],
             manifest: {
                 name: 'VoicePrompter',
                 short_name: 'VoicePrompter',

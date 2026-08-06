@@ -154,7 +154,8 @@ Your scripts are automatically saved to your browser's local storage:
 
 - **No Analytics or Session Recording** - This fork ships the teleprompter with no analytics, tracking, or session replay
 - **Scripts Stay Local** - Your scripts are stored in your browser and never sent to our servers
-- **External Requests We Do Make** - Web fonts load from Google Fonts and `fonts.cdnfonts.com`; on Chrome the Web Speech API sends your audio to Google's servers (a property of the browser, not of this app); Google Doc import contacts a Cloudflare Worker with the document ID only
+- **Self-Hosted Fonts** - DM Sans and OpenDyslexic are served from this site's own origin (`public/vendor/`), so the teleprompter makes no request to Google Fonts or `fonts.cdnfonts.com`
+- **External Requests We Do Make** - On Chrome the Web Speech API sends your audio to Google's servers (a property of the browser, not of this app); Google Doc import contacts a Cloudflare Worker with the document ID only. The marketing pages outside `/app/` still load Google Fonts
 - **Offline Capable** - Works without internet connection (after initial load)
 - **Open Source** - Code available on GitHub for transparency
 

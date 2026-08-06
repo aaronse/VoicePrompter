@@ -53,13 +53,9 @@
 
     <link rel="icon" type="image/svg+xml" href="/logo-icon-no-bg.svg" />
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap"
-        rel="stylesheet">
-    <link href="https://fonts.cdnfonts.com/css/opendyslexic" rel="stylesheet">
+    <!-- Fonts — self-hosted, no third-party requests (see public/vendor/README.md) -->
+    <link rel="preload" href="/vendor/google/dm-sans/dm-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/vendor/fonts.css">
 </head>
 
 <body id="appBody" class="bg-black text-white font-mono selection:bg-blue-500 selection:text-white">
