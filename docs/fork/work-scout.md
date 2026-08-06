@@ -16,7 +16,7 @@ verified clean; every candidate below is about trust/privacy posture, not malwar
 | W2 | Remove public CORS-proxy fallbacks from Doc import | aging-assumption | 21d | just-do-it | Doc content transits third parties on Worker failure or non-allowlisted deploy |
 | W3 | README/privacy.html contradict shipped code | doc-rot | 37d | just-do-it (after W1) | Nothing locally; reputational/legal if published as-is |
 | W4 | `staging` branch auto-deploys to production gh-pages | silent-failure | **256d** | just-do-it | Zero until fork Actions enabled; then one push publishes experiments |
-| W5 | Delete fossils: update_vite_config.js, test.js, test-history.js | fossil | **159d** | just-do-it (ride along with W1–W4) | Nothing much; auditor attention on every sync |
+| W5 | Delete fossils: update_vite_config.js, test.js, test-history.js | fossil | **159d** | just-do-it — **shipped** | Nothing much; auditor attention on every sync |
 | W6 | Fork runs entirely on upstream author's infrastructure | untested-assumption | structural | **split** → D1 decision + W6a batch | Zero under D1=a/b; a launch blocker under D1=c |
 
 Implementation prompt for W1–W4 (executed 2026-08-06): [privacy-hardening.md](privacy-hardening.md)
@@ -120,8 +120,10 @@ Goal:    No script outside scripts/ and the build config remains, and `npm run b
 
 Hard exit criterion: `npm run build` exits 0 **and** `Test-Path` is false for all three files.
 
-Evidence: [update_vite_config.js:2](../../update_vite_config.js#L2),
-[update_vite_config.js:10](../../update_vite_config.js#L10), [test.js:1](../../test.js#L1).
+**Shipped 2026-08-06** — all three deleted; see [CHANGES.md](CHANGES.md). The evidence below cites
+files that no longer exist, so the paths are given unlinked: `update_vite_config.js:2` and `:10`
+(the hard-coded macOS path and the `fs.writeFileSync` to it), `test.js:1` (the unresolvable
+`puppeteer` import).
 
 **What changed and why:** the original Problem described *file contents* ("repo root carries a
 script…"), which is a state, not a defect — it drifted toward restating the Fix in the negative.

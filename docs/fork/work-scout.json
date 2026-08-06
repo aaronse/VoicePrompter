@@ -7,9 +7,9 @@
   "stateOfProjectDoc": "docs/fork/2026-08-05-state-of-project.md",
   "ledgerStatus": {
     "asOf": "2026-08-06",
-    "shipped": ["VoicePrompter-W1", "VoicePrompter-W2", "VoicePrompter-W3", "VoicePrompter-W4"],
-    "shippedIn": ["14ac2d7", "b229e1f", "0474a91", "b6903a7", "0ec588f"],
-    "open": ["VoicePrompter-W5"],
+    "shipped": ["VoicePrompter-W1", "VoicePrompter-W2", "VoicePrompter-W3", "VoicePrompter-W4", "VoicePrompter-W5"],
+    "shippedIn": ["14ac2d7", "b229e1f", "0474a91", "b6903a7", "0ec588f", "9a6323d"],
+    "open": [],
     "resolvedNoWork": ["VoicePrompter-W6 (decision D1=b: private local tool)"],
     "note": "0ec588f self-hosts DM Sans and OpenDyslexic under public/vendor/, which was a follow-up identified during W1 rather than part of it. Gate verified 2026-08-06: npm run build exits 0; dist/app/index.html has no external references; the built app bundle contacts exactly one host, the origin-allowlisted gdoc Worker."
   },
@@ -130,6 +130,8 @@
       "gate": "npm run build exits 0 AND Test-Path returns false for update_vite_config.js, test.js, test-history.js",
       "pcfirgVerdict": "Justified but marginal: the header shows real friction (auditor time, a broken test entry point) yet no user-visible defect. Impact and Risk are dropped as adding nothing, per the contract's merge-away rule. Batch overhead exceeds the work — fold into the W1-W4 branch as a fifth commit rather than spawning its own session.",
       "evidenceRefs": ["update_vite_config.js:2", "update_vite_config.js:10", "test.js:1", "test-history.js:1"],
+      "outcome": "fixed",
+      "outcomeNote": "Shipped 2026-08-06 — all three files deleted. The evidenceRefs above cite files that no longer exist; they are kept as the record of what was found.",
       "age": {
         "lastSubstantiveTouch": "2026-02-27",
         "ageDays": 159,

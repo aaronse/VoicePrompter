@@ -11,6 +11,24 @@ add fork entries there.
 
 ## 2026-08-06
 
+### Removed three dead root-level scripts
+
+`test.js`, `test-history.js` and `update_vite_config.js` were one-off debugging artifacts from
+February–May 2026. None was referenced by an npm script, and each was broken on execution:
+`test.js` imported `puppeteer`, which is in neither dependency list; `update_vite_config.js` used
+CommonJS `require` in a `"type": "module"` package and targeted a hard-coded
+`/Users/konstantin.suvorov/Teleprompter/vite.config.ts`; `test-history.js` was a single
+`console.log`.
+
+Deleted rather than repaired. A file-writing script in the root of a public repository is
+something every security reviewer must stop and read, and a test entry point that fails to resolve
+its own import invites someone to `npm i puppeteer` — pulling a Chromium download into the tree —
+in order to "fix" a file nothing uses.
+
+**Not worth cherry-picking as-is.** Upstream may still want these files, or may prefer to make
+`test.js` work by adding the dependency. This is a tidiness call specific to a fork that gets
+audited.
+
 ### Fixed: blog generator duplicated every post's `<h1>` on Windows checkouts
 
 `scripts/build-blog.js` strips a leading markdown `# Title` from each post body because the article
