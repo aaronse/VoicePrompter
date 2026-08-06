@@ -2,7 +2,11 @@
 
 **Access the app:** [https://voiceprompter.app/](https://voiceprompter.app/)
 
-A modern, privacy-focused voice-controlled teleprompter that works completely offline. Uses your browser's built-in speech recognition (Web Speech API) and native iOS WebKit — no external APIs, completely private, and blazing fast on-device processing.
+A modern, privacy-focused voice-controlled teleprompter. Uses your browser's built-in speech recognition (Web Speech API) and native iOS WebKit, so your scripts stay on your device and the app sends no telemetry of its own. See [Privacy & Security](#-privacy--security) for the external requests the page does still make.
+
+## 🍴 Fork notes
+
+This is a fork of [`kosuvorov/VoicePrompter`](https://github.com/kosuvorov/VoicePrompter) with the upstream telemetry removed — the teleprompter app no longer loads analytics or session recording.
 
 ## ✨ Key Features
 
@@ -148,8 +152,9 @@ Your scripts are automatically saved to your browser's local storage:
 
 ## 🔐 Privacy & Security
 
-- **No External Services** - Everything runs locally in your browser
-- **No Data Collection** - Your scripts never leave your device
+- **No Analytics or Session Recording** - This fork ships the teleprompter with no analytics, tracking, or session replay
+- **Scripts Stay Local** - Your scripts are stored in your browser and never sent to our servers
+- **External Requests We Do Make** - Web fonts load from Google Fonts and `fonts.cdnfonts.com`; on Chrome the Web Speech API sends your audio to Google's servers (a property of the browser, not of this app); Google Doc import contacts a Cloudflare Worker with the document ID only
 - **Offline Capable** - Works without internet connection (after initial load)
 - **Open Source** - Code available on GitHub for transparency
 
