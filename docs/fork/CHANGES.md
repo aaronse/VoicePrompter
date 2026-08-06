@@ -34,6 +34,24 @@ comment at the top of the file.
 
 Related: `0474a91` earlier removed the `staging` branch from the same trigger.
 
+#### Breadcrumb: Actions are also disabled at the repository level
+
+Belt and braces. Alongside the trigger change above, GitHub Actions were switched off for the
+whole repository on 2026-08-06:
+
+```
+gh api -X PUT repos/aaronse/VoicePrompter/actions/permissions -F enabled=false
+```
+
+**This setting lives on GitHub, not in the repository**, so nothing in a clone reveals it. If CI
+ever appears to do nothing — a workflow that never queues, no run history — check this before
+debugging the YAML. Re-enable with `-F enabled=true`; the `workflow_dispatch` trigger above still
+prevents an automatic deploy afterwards.
+
+Recorded here rather than in `AGENTS.md` on purpose: a repository file asserting a mutable remote
+setting goes stale silently, and this is a fact worth finding when you go looking, not one worth
+loading into every agent session.
+
 ### Removed three dead root-level scripts
 
 `test.js`, `test-history.js` and `update_vite_config.js` were one-off debugging artifacts from
