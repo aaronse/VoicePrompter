@@ -44,15 +44,10 @@ export async function fetchGoogleDocText(docUrl: string): Promise<string> {
         throw new Error('Invalid Google Doc URL. Please check the link and try again.');
     }
 
-    const exportUrl = `https://docs.google.com/document/d/${docId}/export?format=txt&cb=${Date.now()}`;
-
-    // Primary: our own Cloudflare Worker (source: cloudflare/gdoc-proxy/worker.js).
-    // The public CORS proxies below are legacy fallbacks only — they are unreliable
-    // (all three were down in July 2026) and may never recover.
+    // Doc import goes only through our origin-allowlisted Cloudflare Worker
+    // (source: cloudflare/gdoc-proxy/worker.js) and fails closed if it is unreachable.
     const proxies = [
-        `https://gdoc-proxy.kosuvorov.workers.dev/?id=${docId}`,
-        `https://api.allorigins.win/raw?url=${encodeURIComponent(exportUrl)}`,
-        `https://corsproxy.io/?${encodeURIComponent(exportUrl)}`
+        `https://gdoc-proxy.kosuvorov.workers.dev/?id=${docId}`
     ];
 
     let lastError: any = null;
