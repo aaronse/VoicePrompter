@@ -8,5 +8,5 @@ dist/
 
 .obsidian/
 
-# Claude Cowork artifact
-AGENTS.md
+# Upstream ignores AGENTS.md (an empty Claude Cowork artifact, 62c64a3). This fork
+# tracks it deliberately: it is the agent contract, and CLAUDE.md imports it.

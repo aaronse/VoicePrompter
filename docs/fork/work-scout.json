@@ -1,0 +1,195 @@
+{
+  "schemaVersion": "work-scout-v1",
+  "repo": "VoicePrompter",
+  "repoPath": "e:\\git\\VoicePrompter",
+  "generatedAt": "2026-08-05",
+  "generatedBy": "claude-fable-5",
+  "stateOfProjectDoc": "docs/fork/2026-08-05-state-of-project.md",
+  "ledgerStatus": {
+    "asOf": "2026-08-06",
+    "shipped": ["VoicePrompter-W1", "VoicePrompter-W2", "VoicePrompter-W3", "VoicePrompter-W4"],
+    "shippedIn": ["14ac2d7", "b229e1f", "0474a91", "b6903a7", "0ec588f"],
+    "open": ["VoicePrompter-W5"],
+    "resolvedNoWork": ["VoicePrompter-W6 (decision D1=b: private local tool)"],
+    "note": "0ec588f self-hosts DM Sans and OpenDyslexic under public/vendor/, which was a follow-up identified during W1 rather than part of it. Gate verified 2026-08-06: npm run build exits 0; dist/app/index.html has no external references; the built app bundle contacts exactly one host, the origin-allowlisted gdoc Worker."
+  },
+  "oneLineDescription": "Voice-controlled teleprompter PWA + large SEO marketing site; pristine fork of kosuvorov/VoicePrompter with zero local commits.",
+  "repoActivity": {
+    "lastCommit": "2026-08-04",
+    "quietDays": 1,
+    "activeWorkstreams": ["Upstream SEO/content sprint (30 commits since 2026-07-05)"],
+    "isBaselineReal": true,
+    "note": "All activity is upstream's (Konstantin Suvorov, 197/197 commits). The fork itself is inert — nobody is working in THIS repo, so 'active' applies to the parent, not the fork."
+  },
+  "candidates": [
+    {
+      "id": "VoicePrompter-W1",
+      "title": "Strip upstream tracking stack from /app/ before local use or any deploy",
+      "shape": "drift",
+      "pcfirg": {
+        "problem": "The app page loads Umami analytics, the unauditable Ansvisor remote script, and rrweb session replay whose block-list omits the script-input textarea, while README and privacy.html claim no data collection.",
+        "cause": "Upstream monetization/growth instrumentation accreted after the privacy docs were written; the fork inherits the author's keys and endpoints wholesale.",
+        "fix": "Delete app/index.html lines 65-71 (and optionally 56-62 external fonts) in the fork; app functions fully without them.",
+        "impact": "Fork actually delivers the privacy the README promises; nothing about local usage reaches upstream's Umami/Ansvisor instances.",
+        "risk": "Merge conflicts on future upstream pulls touching app/index.html head.",
+        "goal": "Loading /app/ in the fork makes zero requests to reactive-analytics.up.railway.app or ansvisor-api.konsu.dev (verifiable in DevTools network tab)."
+      },
+      "evidenceRefs": ["app/index.html:56-71", "app/index.html:227", "README.md:151-152", "privacy.html:268", "src/main.ts:399-858"],
+      "age": {
+        "lastSubstantiveTouch": "2026-08-04",
+        "ageDays": 1,
+        "whatItsAgeMeans": "Tracker host+key were silently swapped yesterday under an SEO commit message (0a61978) — this surface changes under commit messages that do not mention it."
+      },
+      "route": "just-do-it",
+      "routeWhy": "Known problem, known 10-line fix, no design questions.",
+      "steelmanAgainst": "If the fork is only ever run on localhost for reading the code, the trackers fire against upstream's own analytics and harm nobody but your data trail; deleting them costs a permanent merge seam against a fast-moving upstream.",
+      "costOfDelay": "Every local session leaks usage (and possibly 30%-sampled DOM recordings) to upstream's infrastructure; if the fork is ever deployed publicly, you inherit an undisclosed-session-recording privacy posture under your name.",
+      "onFire": false
+    },
+    {
+      "id": "VoicePrompter-W2",
+      "title": "Remove public CORS-proxy fallbacks from Google Doc import",
+      "shape": "aging-assumption",
+      "pcfirg": {
+        "problem": "If the author's Cloudflare Worker fails, users' Google Doc contents are fetched through api.allorigins.win / corsproxy.io — arbitrary third parties see the doc ID and full document body.",
+        "cause": "The proxies predate the self-hosted Worker (added 2026-07-15) and were left as fallbacks despite the code's own comment saying all three were down in July 2026 and may never recover.",
+        "fix": "Delete src/gdoc.ts:54-55 so import uses only an origin-allowlisted Worker (or fails loudly).",
+        "impact": "Document content can no longer transit an unaccountable third party.",
+        "risk": "Doc import breaks entirely when the Worker is down instead of silently degrading.",
+        "goal": "No request path in src/ sends user document identifiers or content to a host outside the deployer's control plus docs.google.com."
+      },
+      "evidenceRefs": ["src/gdoc.ts:50-56", "cloudflare/gdoc-proxy/worker.js:19-27"],
+      "age": {
+        "lastSubstantiveTouch": "2026-07-15",
+        "ageDays": 21,
+        "whatItsAgeMeans": "The hardening commit consciously kept the fallbacks — a decision made and half-implemented, not an oversight nobody saw."
+      },
+      "route": "just-do-it",
+      "routeWhy": "Two-line deletion; the code comment already concedes the fallbacks are dead weight.",
+      "steelmanAgainst": "Docs must already be shared 'Anyone with the link' to import at all, so the marginal exposure is the doc ID (a capability URL) plus proxy operator visibility — real but bounded.",
+      "costOfDelay": "Low until the Worker has an outage; then silent third-party exposure of user documents resumes. Fork-specific: on any non-allowlisted deploy domain the Worker 403s and traffic goes STRAIGHT to the public proxies.",
+      "onFire": false
+    },
+    {
+      "id": "VoicePrompter-W3",
+      "title": "README/privacy.html privacy claims contradict shipped code",
+      "shape": "doc-rot",
+      "pcfirg": {
+        "problem": "README says 'No External Services / No Data Collection' and privacy.html omits session recording, while the app ships three telemetry loaders and external font CDNs.",
+        "cause": "Privacy copy written for the original local-only app (README last substantive touch 2026-06-29) was never revisited as instrumentation accreted from 2026-05-09 onward.",
+        "fix": "In the fork: rewrite README privacy section and privacy.html to match actual behavior, or make them true by doing W1 first.",
+        "impact": "Anyone evaluating the fork from its docs is no longer misled on the product's core claim.",
+        "goal": "Every privacy claim in README.md and privacy.html is verifiable against the network behavior of a built /app/ page."
+      },
+      "evidenceRefs": ["README.md:5", "README.md:149-154", "privacy.html:268", "app/index.html:65-71"],
+      "age": {
+        "lastSubstantiveTouch": "2026-06-29",
+        "ageDays": 37,
+        "whatItsAgeMeans": "The docs predate the tracker growth they fail to mention — classic rot where the code moved and the promise did not."
+      },
+      "route": "just-do-it",
+      "routeWhy": "Ordering note: do W1 first, then this becomes a small truthful-copy edit; W1 is the fix, this is the paperwork.",
+      "steelmanAgainst": "If W1 lands, the claims become mostly true and only privacy.html's Web-Speech nuance needs a line — arguably fold this into W1 rather than track separately.",
+      "costOfDelay": "Nothing much locally; reputational/legal only if the fork is published with the false claims intact.",
+      "onFire": false
+    },
+    {
+      "id": "VoicePrompter-W4",
+      "title": "staging branch auto-deploys to the production gh-pages target",
+      "shape": "silent-failure",
+      "pcfirg": {
+        "problem": "deploy.yml triggers on push to main OR staging and both publish ./dist via the same gh-pages action, so pushing any branch named 'staging' in the fork silently replaces the fork's live Pages site.",
+        "cause": "Staging deployment was enabled on day one (2025-11-22) before the site had value, and never scoped to a separate target.",
+        "fix": "In the fork, drop 'staging' from the trigger (or disable the workflow entirely until deployment is intended).",
+        "impact": "No accidental publish path from experimental branches.",
+        "risk": "None; the fork does not use a staging flow.",
+        "goal": "Only main can publish, or the workflow is disabled."
+      },
+      "evidenceRefs": [".github/workflows/deploy.yml:3-8", ".github/workflows/deploy.yml:30-34"],
+      "age": {
+        "lastSubstantiveTouch": "2025-11-22",
+        "ageDays": 256,
+        "whatItsAgeMeans": "Untouched since repo day one — the oldest live config in the repo, running with contents:write on every push to two branches, and nobody has looked at it since."
+      },
+      "route": "just-do-it",
+      "routeWhy": "One-line trigger edit; cheaper to fix than to remember.",
+      "steelmanAgainst": "GitHub disables workflows on forks by default until manually enabled, so the trap is armed only if the fork owner enables Actions — which they may never do.",
+      "costOfDelay": "Zero until Actions are enabled on the fork; then one mislabeled branch push publishes experiments to a public URL.",
+      "onFire": false
+    },
+    {
+      "id": "VoicePrompter-W5",
+      "title": "Delete fossil scripts: update_vite_config.js and orphan test files",
+      "shape": "fossil",
+      "pcfirg": {
+        "problem": "Both root-level scripts fail on execution — `node test.js` exits non-zero with ERR_MODULE_NOT_FOUND (puppeteer is in neither dependency list) and `node update_vite_config.js` crashes on a hard-coded /Users/konstantin.suvorov/ path — so every audit of this fork must prove two file-writing scripts inert before trusting the tree.",
+        "cause": "One-off dev artifacts committed Feb-May 2026; no npm script invokes them, so nothing ever surfaced the breakage.",
+        "fix": "Delete update_vite_config.js, test.js, test-history.js.",
+        "goal": "No script outside scripts/ and the build config remains in the repo, and `npm run build` still exits 0."
+      },
+      "gate": "npm run build exits 0 AND Test-Path returns false for update_vite_config.js, test.js, test-history.js",
+      "pcfirgVerdict": "Justified but marginal: the header shows real friction (auditor time, a broken test entry point) yet no user-visible defect. Impact and Risk are dropped as adding nothing, per the contract's merge-away rule. Batch overhead exceeds the work — fold into the W1-W4 branch as a fifth commit rather than spawning its own session.",
+      "evidenceRefs": ["update_vite_config.js:2", "update_vite_config.js:10", "test.js:1", "test-history.js:1"],
+      "age": {
+        "lastSubstantiveTouch": "2026-02-27",
+        "ageDays": 159,
+        "whatItsAgeMeans": "Committed once for a one-off edit and never referenced again — textbook fossil; its age proves nothing depends on it."
+      },
+      "route": "just-do-it",
+      "routeWhy": "Pure deletion, zero behavior change (verified: no npm script references any of the three). Ride along with the W1-W4 branch; not worth its own batch.",
+      "steelmanAgainst": "They are inert — nothing invokes them — so deleting buys tidiness, not safety; a fork trying to stay merge-clean with upstream might leave them.",
+      "costOfDelay": "Nothing much; a few minutes of every future auditor's attention.",
+      "onFire": false
+    },
+    {
+      "id": "VoicePrompter-W6",
+      "title": "Fork runs entirely on upstream author's infrastructure",
+      "shape": "untested-assumption",
+      "pcfirgVerdict": "The original W6 header FAILED the contract on two counts: its Problem was conditional ('deployed anywhere else, it would…') rather than an observable defect today, and its Goal was 'write down a decision' — a document, not a checkable state, so no hard exit criterion could exist. Correctly split into an Owner decision (D1) plus one conditional batch (W6a) that exists only under one answer.",
+      "decision": {
+        "id": "VoicePrompter-D1",
+        "owner": "Owner, not a Dev",
+        "question": "What is this fork for?",
+        "options": {
+          "a": "Read-only study of the code — no work at all; W1-W4 are optional and W6 evaporates.",
+          "b": "Private tool on a local dev machine (the stated situation) — fully satisfied by W1+W2; W6 requires NOTHING further, because localhost:5173/4173 are already in the Worker's allowlist.",
+          "c": "Independent deployment under another domain — unlocks W6a below."
+        },
+        "note": "Under (a) and (b) there is no W6 work. Only (c) produces a batch."
+      },
+      "pcfirg": {
+        "problem": "W6a, conditional on decision D1=c: from any origin other than voiceprompter.app or localhost the gdoc Worker returns 403, and once W2 removes the fallbacks Doc import fails with a generic 'try again later' message that names no cause.",
+        "cause": "Endpoint hosts and the Worker's ALLOWED_ORIGINS are hard-coded literals belonging to upstream; nothing in the fork parameterizes them.",
+        "fix": "Deploy the fork's own copy of cloudflare/gdoc-proxy with the fork's origins in ALLOWED_ORIGINS, and point src/gdoc.ts at it.",
+        "impact": "The fork owns every endpoint it depends on.",
+        "risk": "Needs a Cloudflare account plus a rate-limiter binding, and the deployed Worker then inherits the manual repo-vs-dashboard sync burden the file itself warns about.",
+        "goal": "Importing a public Google Doc from the fork's deployed origin returns its text — provable by a 200 from `curl -H 'Origin: <fork-origin>' <fork-worker>/?id=<known-public-doc>`."
+      },
+      "evidenceRefs": ["src/gdoc.ts:53", "cloudflare/gdoc-proxy/worker.js:15-16", "cloudflare/gdoc-proxy/worker.js:19-24", "cloudflare/gdoc-proxy/worker.js:39-41", "app/index.html:65-71", "index.html:1752"],
+      "age": {
+        "lastSubstantiveTouch": "2026-08-04",
+        "ageDays": 1,
+        "whatItsAgeMeans": "Age is structural, not temporal — the coupling has existed since the endpoints were added and deepens with each upstream commit."
+      },
+      "route": "batch",
+      "routeWhy": "Re-routed from just-do-it: under D1=c this is gated implementation work with a curl-shaped exit code, which is the batch definition. Under D1=a or D1=b it is not work at all. It was never a study — nothing here is unknown.",
+      "steelmanAgainst": "If the fork exists only to read the code or send upstream PRs, decoupling is wasted work and permanent merge friction; and self-hosting the Worker buys a sync obligation the repo already admits it handles by hand.",
+      "costOfDelay": "Zero under D1=a/b. Under D1=c it is a launch blocker, not a delay cost — Doc import is simply broken until it is done.",
+      "onFire": false
+    }
+  ],
+  "considered": [
+    { "title": "Malicious-code audit findings", "reason": "None found — no eval/new Function/base64 blobs/install hooks; all 568 lockfile entries registry-pinned with integrity hashes; build scripts are pure local file I/O. Nothing to ledger." },
+    { "title": "Repo-copy vs deployed-copy drift of Cloudflare Workers", "reason": "Real seam (worker.js:15-16 admits manual sync) but unverifiable and unactionable from the fork — the deployment is in upstream's dashboard." },
+    { "title": "YouTube iframes not privacy-enhanced (youtube-nocookie)", "reason": "Marketing pages only, not the app; below the bar for a fork-security read." },
+    { "title": "Chrome Web Speech API streams audio to Google", "reason": "Browser platform property, not repo code; noted in state doc §3.4, nothing to fix in-repo." },
+    { "title": "cdnfonts/jsdelivr loads without SRI", "reason": "Folded into W1's optional lines 56-62 rather than a separate candidate." }
+  ],
+  "quotaCheck": {
+    "candidatesOlderThan90Days": 2,
+    "totalCandidates": 6,
+    "met": false,
+    "note": "Honest miss. The repo is 8.5 months old and upstream rewrote most load-bearing surface within the last 90 days (tracking stack May-Aug, gdoc path July, SEO sweep July-Aug). The two genuinely old items that still matter (deploy.yml 256d, fossils 159d) are both listed; no older item was found that clears the bar, and no weak old item was promoted to game the quota."
+  },
+  "caveats": "Behavior of remote scripts (recorder.js masking level, Ansvisor t.js collection scope) and deployed Cloudflare Workers cannot be verified from source — labeled claimed/unverifiable where cited. Dates from git author dates. This is a pristine fork: 'active workstreams' describe the parent repo, which can invalidate any file:line cited here on the next sync."
+}

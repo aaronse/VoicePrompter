@@ -8,6 +8,10 @@ A modern, privacy-focused voice-controlled teleprompter. Uses your browser's bui
 
 This is a fork of [`kosuvorov/VoicePrompter`](https://github.com/kosuvorov/VoicePrompter) with the upstream telemetry removed — the teleprompter app no longer loads analytics or session recording.
 
+What changed and why is written up in [`docs/fork/`](docs/fork/), along with the assessment behind
+it. Those are this fork's working notes, not product documentation, and they are public so the
+changes can be cherry-picked by upstream or anyone else who wants them.
+
 ## ✨ Key Features
 
 - 🎙️ **Voice-Controlled Scrolling** - Navigate your script hands-free using voice commands
