@@ -46,7 +46,11 @@ Rules:
    by design.
 3. **Privacy claims in `README.md` and `privacy.html` must match the code.** If you change what
    the app requests, update both in the same commit.
-4. **Do not commit unless asked.** Show the diff and wait.
+4. **The deploy workflow is manual-only.** `.github/workflows/deploy.yml` triggers on
+   `workflow_dispatch`, not on push. Do not restore the push trigger — this fork is run locally,
+   and an automatic deploy would publish a duplicate of upstream's marketing site, carrying their
+   store links and contact details, under another account.
+5. **Do not commit unless asked.** Show the diff and wait.
 
 ## Build gotchas — read before running the build
 

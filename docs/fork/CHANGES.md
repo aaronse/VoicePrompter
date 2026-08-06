@@ -11,6 +11,29 @@ add fork entries there.
 
 ## 2026-08-06
 
+### Made the GitHub Pages deploy manual-only
+
+`.github/workflows/deploy.yml` now triggers on `workflow_dispatch` instead of on push to `main`.
+
+Actions are enabled on this fork and the workflow was registered and active, so the next push to
+`main` would have built the site and pushed `dist/` to a public `gh-pages` branch — standing up a
+duplicate of upstream's marketing site, carrying their canonical URLs, App Store campaign links
+and contact address, under a different account. This fork is run locally and has nothing to
+publish.
+
+The secondary reason is supply chain: the workflow uses `peaceiris/actions-gh-pages@v3`, a
+floating tag rather than a pinned SHA, and the repository allows all actions. That is an
+acceptable risk for a workflow you rely on and a pointless one for a workflow you never use.
+
+Chosen over deleting the file, so upstream's deploy logic stays available for reference, and over
+disabling it through the GitHub API, which is repository state rather than code — invisible in a
+clone and silently undone by anyone who re-enables Actions. The restore instructions are in a
+comment at the top of the file.
+
+**Not for cherry-picking.** Upstream needs its automatic deploy; this is a fork-only change.
+
+Related: `0474a91` earlier removed the `staging` branch from the same trigger.
+
 ### Removed three dead root-level scripts
 
 `test.js`, `test-history.js` and `update_vite_config.js` were one-off debugging artifacts from

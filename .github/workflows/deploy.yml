@@ -1,9 +1,17 @@
 name: Deploy to GitHub Pages
 
+# Manual only in this fork. Upstream deploys on every push to main; this fork runs
+# locally and has no site to publish, so an automatic deploy would only stand up a
+# duplicate of upstream's marketing site under another account. Trigger it by hand
+# from the Actions tab if that ever changes.
+#
+# To restore upstream's behaviour, replace the `on:` block below with:
+#   on:
+#     push:
+#       branches:
+#         - main
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   deploy:
